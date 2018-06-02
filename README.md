@@ -1,2 +1,2 @@
 # bill-repo
-Bill repository
+Java rest service for storing and retrieveing bills.
