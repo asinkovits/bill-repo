@@ -1,5 +1,6 @@
 package com.sinkovits.rent.billrepo;
 
+import com.sinkovits.rent.billrepo.parser.PdfFileParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,11 +39,13 @@ public class BillService {
     private static final String FILE_NAME = "file_name";
     private static final String DATA = "data";
 
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final PdfFileParser fileParser;
 
     @Autowired
-    public BillService(NamedParameterJdbcTemplate jdbcTemplate) {
+    public BillService(NamedParameterJdbcTemplate jdbcTemplate, PdfFileParser fileParser) {
         this.jdbcTemplate = jdbcTemplate;
+        this.fileParser = fileParser;
     }
 
     public Collection<Bill> getAllBills() {
@@ -65,7 +68,8 @@ public class BillService {
     }
 
     public Bill processBillFile(MultipartFile file) throws IOException {
-        Bill bill = new Bill("foo", "bar");
+
+        Bill bill = fileParser.parse(file.getInputStream());
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("bill_id", bill.getId());

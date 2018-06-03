@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collection;
 
 @RestController
@@ -58,9 +59,8 @@ public class BillController {
     }
 
     @PostMapping(FILE_MAPPING)
-    public Bill file(@RequestParam MultipartFile file) {
-        Bill bill = new Bill("x", "y");
-        return bill;
+    public Bill file(@RequestParam MultipartFile file) throws IOException {
+        return billService.processBillFile(file);
     }
 
     @PutMapping(ID_MAPPING)
