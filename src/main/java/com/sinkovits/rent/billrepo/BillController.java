@@ -1,5 +1,7 @@
 package com.sinkovits.rent.billrepo;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -38,14 +40,16 @@ public class BillController {
     @GetMapping(ID_MAPPING + FILE_MAPPING)
     @ResponseBody
     public ResponseEntity<Resource> getFile(@PathVariable String id) {
+
+        BillFile file = billService.getBillFile(id);
+
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         //        "attachment; filename=\"" + file.getFileName() + "\"")
-                        "inline; filename=\"" + "test" + "\"")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .body(new FileSystemResource("D:/output.pdf"));
-
+                        "inline; filename=\"" + file.getFileName() + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, file.getType())
+                .body(file.getData());
     }
 
 
@@ -76,7 +80,7 @@ public class BillController {
     @PostMapping(ID_MAPPING + FILE_MAPPING)
     public Bill updateFile(
             @PathVariable String id,
-            @RequestParam MultipartFile file) {
-        return billService.getBill(id);
+            @RequestParam MultipartFile file) throws IOException {
+        return billService.updateBillFile(id, file);
     }
 }
